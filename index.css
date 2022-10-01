@@ -1,14 +1,47 @@
-p {
-    position: absolute;
-    color: white;
-    left: 10px;
-    top: 10px;
-    margin: 0;
-    font-family: sans-serif;
-    font-size: 12px;
-    z-index: 10;
+body{
+    display: flex;
+    flex-direction: column;
 }
-
-div {
+#score_p {
+    font-family: sans-serif;
+    font-size: 16px;
+}
+#hs{
+    position: absolute;
+    right: 10px;
+    color: red;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+#hp{
+    margin-left: 180px;
+}
+#board{
     position: relative;
+    width: 574px;
+    display: flex;
+    margin: none;
+    background-color: white;
+}
+.fa-heart{
+    color: red;
+}
+#canvas{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+#lose{
+    position: absolute;
+    display: block;
+    align-items: center;
+    top: 100px;
+    left: 87px;
+    width: 400;
+    text-align: center;
+    overflow-wrap: break-word;
+    align-items: center;
+    color: white;
+    font-size: 50;
+    z-index: 10;
 }

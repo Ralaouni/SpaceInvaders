@@ -1,6 +1,12 @@
 var canvas = document.querySelector('canvas');
 var scoreEl = document.querySelector('#scoreEl');
+var hs = document.querySelector('#highest_score');
+var hp_heart = document.querySelector('#hp_heart');
+var loseHTML = document.querySelector('#lose');
 var c = canvas.getContext('2d');
+hs.innerHTML = "".concat((document.cookie.split('; ')
+    .find(function (row) { return row.startsWith('highestscore'); })
+    .split('=')[1]));
 canvas.width = 576;
 canvas.height = 700;
 var Player = /** @class */ (function () {
@@ -26,8 +32,8 @@ var Player = /** @class */ (function () {
         };
     }
     Player.prototype.draw = function () {
-        c.fillStyle = 'red';
-        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+        // c.fillStyle = 'red'
+        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
         c.save();
         c.globalAlpha = this.opacity;
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
@@ -40,6 +46,44 @@ var Player = /** @class */ (function () {
         }
     };
     return Player;
+}());
+var Player2 = /** @class */ (function () {
+    function Player2() {
+        var _this = this;
+        this.velocity = {
+            x: 0,
+            y: 0
+        };
+        this.rotation = 0;
+        this.opacity = 1;
+        var image = new Image();
+        image.src = "img/spaceship.png";
+        image.onload = function () {
+            var scale = 0.11;
+            _this.image = image;
+            _this.width = image.width * scale;
+            _this.height = image.height * scale;
+            _this.position = {
+                x: canvas.width / 4 - _this.width / 2,
+                y: canvas.height - 30
+            };
+        };
+    }
+    Player2.prototype.draw = function () {
+        // c.fillStyle = 'red'
+        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.save();
+        c.globalAlpha = this.opacity;
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        c.restore();
+    };
+    Player2.prototype.update = function () {
+        if (this.image) {
+            this.draw();
+            this.position.x += this.velocity.x;
+        }
+    };
+    return Player2;
 }());
 var Projectile = /** @class */ (function () {
     function Projectile(_a) {
@@ -61,6 +105,27 @@ var Projectile = /** @class */ (function () {
         this.position.y += this.velocity.y;
     };
     return Projectile;
+}());
+var Projectile2 = /** @class */ (function () {
+    function Projectile2(_a) {
+        var position = _a.position, velocity = _a.velocity, radius = _a.radius;
+        this.position = position;
+        this.velocity = velocity;
+        this.radius = radius;
+    }
+    Projectile2.prototype.draw = function () {
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
+        c.fillStyle = 'red';
+        c.fill();
+        c.closePath();
+    };
+    Projectile2.prototype.update = function () {
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    };
+    return Projectile2;
 }());
 var Particule = /** @class */ (function () {
     function Particule(_a) {
@@ -94,11 +159,12 @@ var Particule = /** @class */ (function () {
 }());
 var InvaderProjectile = /** @class */ (function () {
     function InvaderProjectile(_a) {
-        var position = _a.position, velocity = _a.velocity;
+        var position = _a.position, velocity = _a.velocity, width = _a.width, height = _a.height, big = _a.big;
         this.position = position;
         this.velocity = velocity;
-        this.width = 3;
-        this.height = 10;
+        this.width = width;
+        this.height = height;
+        this.big = big;
     }
     InvaderProjectile.prototype.draw = function () {
         c.fillStyle = 'white';
@@ -137,6 +203,10 @@ var Invader = /** @class */ (function () {
         // c.fillStyle = 'red'
         // c.fillRect(this.position.x, this.position.y, this.width, this.height)
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        if (this.position.y + this.height >= canvas.height - 60) {
+            game.over = true;
+            loseCondition();
+        }
     };
     Invader.prototype.update = function (_a) {
         var velocity = _a.velocity;
@@ -155,10 +225,75 @@ var Invader = /** @class */ (function () {
             velocity: {
                 x: 0,
                 y: 4
-            }
+            },
+            width: 3,
+            height: 10,
+            big: false
         }));
     };
     return Invader;
+}());
+var BigInvader = /** @class */ (function () {
+    function BigInvader() {
+        var _this = this;
+        this.velocity = {
+            x: 2,
+            y: 0
+        };
+        this.position = {
+            x: 0,
+            y: 0
+        };
+        this.rotation = 0;
+        this.HP = 20;
+        var image = new Image();
+        image.src = "img/bigInvader.png";
+        image.onload = function () {
+            var scale = 3;
+            _this.image = image;
+            _this.width = image.width * scale;
+            _this.height = image.height * scale;
+            _this.position.x;
+            _this.position.y;
+        };
+    }
+    BigInvader.prototype.draw = function () {
+        // c.fillStyle = 'red'
+        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        if (this.position.y + this.height >= canvas.height - 30) {
+            game.over = true;
+            loseCondition();
+        }
+    };
+    BigInvader.prototype.update = function () {
+        if (this.image) {
+            this.draw();
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
+        }
+        this.velocity.y = 0;
+        if (this.position.x + this.width >= canvas.width || this.position.x < 0) {
+            this.velocity.x = -this.velocity.x;
+            this.velocity.y += 60;
+        }
+    };
+    BigInvader.prototype.shoot = function (InvaderProjectiles) {
+        InvaderProjectiles.push(new InvaderProjectile({
+            position: {
+                x: this.position.x + this.width / 2,
+                y: this.position.y + this.height / 2
+            },
+            velocity: {
+                x: 0,
+                y: 2
+            },
+            width: 10,
+            height: 17,
+            big: true
+        }));
+    };
+    return BigInvader;
 }());
 var Grid = /** @class */ (function () {
     function Grid() {
@@ -197,8 +332,11 @@ var Grid = /** @class */ (function () {
     return Grid;
 }());
 var player = new Player();
+var player2 = new Player2();
 var projectiles = [];
+var projectiles2 = [];
 var grids = [];
+var bigInvaders = [];
 var InvaderProjectiles = [];
 var particles = [];
 var keys = {
@@ -210,6 +348,15 @@ var keys = {
     },
     space: {
         pressed: false
+    },
+    ArrowLeft: {
+        pressed: false
+    },
+    ArrowRight: {
+        pressed: false
+    },
+    0: {
+        pressed: false
     }
 };
 var frame = 0;
@@ -219,6 +366,35 @@ var game = {
     active: true
 };
 var score = 0;
+var highest_score = 0;
+var HP = 3;
+var soundPlayerDeath = new Audio('sound/player_explosion_sound.wav');
+var soundInvaderDeath = new Audio('sound/invader_explosion_sound.wav');
+var soundHitPlayer = new Audio('sound/hit_player_sound.wav');
+function loseCondition() {
+    setTimeout(function () {
+        if (score > parseFloat(document.cookie.split('; ')
+            .find(function (row) { return row.startsWith('highestscore'); })
+            .split('=')[1])) {
+            setTimeout(function () {
+                highest_score = score;
+                document.cookie = "highestscore=".concat(highest_score);
+                loseHTML.innerHTML = 'YOU SUCK BUT NOT AS MUCH AS THE OTHER POEPLE !<br> F5 TO RETRY';
+            }, 2000);
+        }
+        else {
+            loseHTML.innerHTML = 'YOU SUCK !<br> F5 TO RETRY';
+        }
+        game.active = false;
+    }, 2000);
+}
+function Hplost() {
+    hp_heart.innerHTML = null;
+    for (var i = 0; i < HP; i++) {
+        hp_heart.innerHTML += '<i class="fa-solid fa-heart"></i>';
+    }
+}
+Hplost();
 for (var i = 0; i < 100; i++) {
     particles.push(new Particule({
         position: {
@@ -236,7 +412,7 @@ for (var i = 0; i < 100; i++) {
 }
 function createParticles(_a) {
     var object = _a.object, color = _a.color, fades = _a.fades;
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 10; i++) {
         particles.push(new Particule({
             position: {
                 x: object.position.x + object.width / 2,
@@ -252,6 +428,26 @@ function createParticles(_a) {
         }));
     }
 }
+function playerhit(player, particles_color) {
+    Hplost();
+    createParticles({
+        object: player,
+        color: "".concat(particles_color),
+        fades: true
+    });
+    if (HP > 0) {
+        soundHitPlayer.play();
+        return;
+    }
+    else {
+        soundPlayerDeath.play();
+    }
+    setTimeout(function () {
+        player.opacity = 0;
+        game.over = true;
+    }, 0);
+    loseCondition();
+}
 function animate() {
     if (!game.active)
         return;
@@ -259,6 +455,42 @@ function animate() {
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
     player.update();
+    player2.update();
+    bigInvaders.forEach(function (bigInvader, i) {
+        bigInvader.update();
+        if (frame % 300 === 0) {
+            bigInvader.shoot(InvaderProjectiles);
+        }
+        projectiles.forEach(function (projectile, j) {
+            if (projectile.position.y - projectile.radius <= bigInvader.position.y + bigInvader.height && projectile.position.x + projectile.radius >= bigInvader.position.x && projectile.position.x - projectile.radius <= bigInvader.position.x + bigInvader.width && projectile.position.y + projectile.radius >= bigInvader.position.y) {
+                setTimeout(function () {
+                    var invaderFound = bigInvaders.find(function (invader2) { return invader2 === bigInvader; });
+                    var projectileFound = projectiles.find(function (projectile2) { return projectile2 === projectile; });
+                    // remove bigInvader and projectiles
+                    if ((invaderFound && projectileFound && bigInvaders[i].HP === 0)) {
+                        score += 30;
+                        scoreEl.innerHTML = "".concat(score);
+                        createParticles({
+                            object: bigInvader,
+                            color: '#BAA0DE',
+                            fades: true
+                        });
+                        bigInvaders.splice(i, 1);
+                        projectiles.splice(j, 1);
+                    }
+                    else {
+                        bigInvaders[i].HP -= 1;
+                        projectiles.splice(j, 1);
+                        createParticles({
+                            object: bigInvader,
+                            color: '#BAA0DE',
+                            fades: true
+                        });
+                    }
+                }, 0);
+            }
+        });
+    });
     particles.forEach(function (particle, i) {
         if (particle.position.y - particle.radius >= canvas.height) {
             particle.position.x = Math.random() * canvas.width;
@@ -282,22 +514,27 @@ function animate() {
         else {
             InvaderProjectile.update();
         }
-        // Projectile hit player
+        // Projectile hit player1
         if (InvaderProjectile.position.y + InvaderProjectile.height >= player.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player.position.x && InvaderProjectile.position.x <= player.position.x + player.width) {
-            console.log('You Suck');
-            setTimeout(function () {
-                InvaderProjectiles.splice(index, 1);
-                player.opacity = 0;
-                game.over = true;
-            }, 0);
-            setTimeout(function () {
-                game.active = false;
-            }, 2000);
-            createParticles({
-                object: player,
-                color: 'blue',
-                fades: true
-            });
+            InvaderProjectiles.splice(index, 1);
+            if (InvaderProjectile.big) {
+                HP -= 3;
+            }
+            else {
+                HP -= 1;
+            }
+            playerhit(player, 'blue');
+        }
+        // Projectile hit player 2
+        if (InvaderProjectile.position.y + InvaderProjectile.height >= player2.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player2.position.x && InvaderProjectile.position.x <= player2.position.x + player2.width) {
+            InvaderProjectiles.splice(index, 1);
+            if (InvaderProjectile.big) {
+                HP -= 3;
+            }
+            else {
+                HP -= 1;
+            }
+            playerhit(player2, 'white');
         }
     });
     projectiles.forEach(function (projectile, index) {
@@ -323,6 +560,7 @@ function animate() {
             // projectile hit enemy
             projectiles.forEach(function (projectile, j) {
                 if (projectile.position.y - projectile.radius <= invader.position.y + invader.height && projectile.position.x + projectile.radius >= invader.position.x && projectile.position.x - projectile.radius <= invader.position.x + invader.width && projectile.position.y + projectile.radius >= invader.position.y) {
+                    soundInvaderDeath.play();
                     setTimeout(function () {
                         var invaderFound = grid.invaders.find(function (invader2) { return invader2 === invader; });
                         var projectileFound = projectiles.find(function (projectile2) { return projectile2 === projectile; });
@@ -352,6 +590,7 @@ function animate() {
             });
         });
     });
+    // Player 1 mouvement
     if (keys.q.pressed && player.position.x >= 0) {
         player.velocity.x = -5;
     }
@@ -361,9 +600,26 @@ function animate() {
     else {
         player.velocity.x = 0;
     }
+    // PLayer 2 mouvement
+    if (keys.ArrowLeft.pressed && player2.position.x >= 0) {
+        player2.velocity.x = -5;
+    }
+    else if (keys.ArrowRight.pressed && player2.position.x + player2.width <= canvas.width) {
+        player2.velocity.x = 5;
+    }
+    else {
+        player2.velocity.x = 0;
+    }
     // spawn ennemies
     if (frame % randomInterval === 0) {
-        grids.push(new Grid());
+        if (randomInterval < 875) {
+            grids.push(new Grid());
+            console.log(randomInterval, 'ass');
+        }
+        else {
+            bigInvaders.push(new BigInvader());
+            console.log(randomInterval, 'ass1');
+        }
         frame = 0;
         randomInterval = (Math.floor((Math.random() * 500) + 500));
     }
@@ -396,8 +652,25 @@ addEventListener('keydown', function (_a) {
                 }
             }));
             break;
+        case 'ArrowLeft':
+            keys.ArrowLeft.pressed = true;
+            break;
+        case 'ArrowRight':
+            keys.ArrowRight.pressed = true;
+            break;
+        case '0':
+            projectiles.push(new Projectile({
+                position: {
+                    x: player2.position.x + player2.width / 2,
+                    y: player2.position.y
+                },
+                velocity: {
+                    x: 0,
+                    y: -10
+                }
+            }));
+            break;
     }
-    console.log(key);
 });
 addEventListener('keyup', function (_a) {
     var key = _a.key;
@@ -408,11 +681,16 @@ addEventListener('keyup', function (_a) {
             break;
         case 'd':
             // console.log('right')
-            player.velocity.x = 5;
             keys.d.pressed = false;
             break;
         case ' ':
             // console.log('space')
+            break;
+        case 'ArrowLeft':
+            keys.ArrowLeft.pressed = false;
+            break;
+        case 'ArrowRight':
+            keys.ArrowRight.pressed = false;
             break;
     }
 });
