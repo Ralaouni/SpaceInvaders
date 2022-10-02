@@ -8,7 +8,12 @@
     },
     "files": [
         "src/index.ts",
-        "src/menu.ts"
+        "src/menu.ts",
+        "src/function/function.ts",
+        "src/class/player.ts",
+        "src/class/projectile.ts",
+        "src/class/enemy.ts",
+        "src/class/particle.ts",
     ],
     "exclude": [
         "node_modules"
