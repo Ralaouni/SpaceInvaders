@@ -1,8 +1,10 @@
+
 const canvas = document.querySelector('canvas')
 const scoreEl = document.querySelector('#scoreEl')
 const hs = document.querySelector('#highest_score')
 const hp_heart = document.querySelector('#hp_heart')
 const loseHTML = document.querySelector('#lose')
+const numPlayers = parseFloat(sessionStorage.getItem('number_Of_Players'))
 
 const c = canvas.getContext('2d')
 
@@ -23,7 +25,7 @@ class Player {
     image: HTMLImageElement
     rotation: number
     opacity: number
-    constructor() {
+    constructor(imgsrc, wichPlayer, taille, y ) {
         this.velocity = {
             x: 0,
             y: 0
@@ -33,71 +35,15 @@ class Player {
         this.opacity = 1
         
         const image = new Image()
-        image.src = "img/vaisseau_fanny_pourri.png"
+        image.src = imgsrc
         image.onload = () => {
-            const scale = 0.04
+            const scale = taille
             this.image = image
             this.width = image.width * scale
             this.height = image.height * scale
             this.position = {
-                x: canvas.width / 2 - this.width / 2,
-                y: canvas.height - 60
-            }
-        }
-    }
-
-    draw() {
-        // c.fillStyle = 'red'
-        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-            c.save()
-            c.globalAlpha = this.opacity
-            c.drawImage(
-                this.image,
-                this.position.x,
-                this.position.y,
-                this.width,
-                this.height
-                )   
-            c.restore()
-    }
-
-    update() {
-        if (this.image) {
-            this.draw()
-            this.position.x +=  this.velocity.x
-        }
-        
-    }
-}
-
-class Player2 {
-    position: { x: number; y: number }
-    velocity: { x: number; y: number }
-    width: number
-    height: number
-    image: HTMLImageElement
-    rotation: number
-    opacity: number
-    constructor() {
-        this.velocity = {
-            x: 0,
-            y: 0
-        }
-
-        this.rotation = 0
-        this.opacity = 1
-        
-        const image = new Image()
-        image.src = "img/spaceship.png"
-        image.onload = () => {
-            const scale = 0.11
-            this.image = image
-            this.width = image.width * scale
-            this.height = image.height * scale
-            this.position = {
-                x: canvas.width / 4 - this.width / 2,
-                y: canvas.height - 30
+                x: (canvas.width / 5 ) * wichPlayer - this.width / wichPlayer,
+                y: canvas.height - y
             }
         }
     }
@@ -451,8 +397,20 @@ class Grid {
     }
 }
 
-const player = new Player()
-const player2 = new Player2()
+const player = new Player("img/vaisseau_fanny_pourri.png", 1, 0.04, 60)
+let player2 = null
+if (numPlayers >= 2) {
+    player2 = new Player("img/spaceship.png", 2, 0.11, 30)
+} 
+let player3 = null
+if (numPlayers >= 3) {
+    player3 = new Player("img/spaceship.png", 3, 0.11, 30)
+} 
+let player4 = null
+if (numPlayers >= 4) {
+    player4 = new Player("img/spaceship.png", 4, 0.11, 30)
+} 
+
 
 const projectiles = []
 const projectiles2 = []
@@ -478,7 +436,25 @@ const keys = {
     },
     0: {
         pressed:false
-    }
+    },
+    r:{
+        pressed:false
+    },
+    t:{
+        pressed:false
+    },
+    y:{
+        pressed:false
+    },
+    u:{
+        pressed:false
+    },
+    i:{
+        pressed:false
+    },
+    o:{
+        pressed:false
+    },
 }
 
 let frame = 0
@@ -494,6 +470,16 @@ let HP = 3
 let soundPlayerDeath = new Audio('sound/player_explosion_sound.wav')
 let soundInvaderDeath = new Audio('sound/invader_explosion_sound.wav')
 let soundHitPlayer = new Audio('sound/hit_player_sound.wav')
+
+function ProjectileHitPlayer (player,InvaderProjectile, index, color) {
+    if (InvaderProjectile.position.y + InvaderProjectile.height >= player.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player.position.x && InvaderProjectile.position.x <= player.position.x + player.width) {
+        InvaderProjectiles.splice(index, 1)
+        if (InvaderProjectile.big) {
+            HP-= 3
+        } else {HP -= 1}
+        playerhit(player, `${color}`)
+    }
+}
 
 function loseCondition () {
         setTimeout(() => {
@@ -584,7 +570,9 @@ function animate() {
     c.fillStyle = 'black'
     c.fillRect(0,0,canvas.width, canvas.height)
     player.update()
-    player2.update()
+    if (player2) player2.update()
+    if (player3) player3.update()
+    if (player4) player4.update()
 
     bigInvaders.forEach((bigInvader, i) => {
 
@@ -653,24 +641,26 @@ function animate() {
 
         // Projectile hit player1
 
-        if (InvaderProjectile.position.y + InvaderProjectile.height >= player.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player.position.x && InvaderProjectile.position.x <= player.position.x + player.width) {
-            InvaderProjectiles.splice(index, 1)
-            if (InvaderProjectile.big) {
-                HP-= 3
-            } else {HP -= 1}
-            playerhit(player, 'blue')
-        }
+        ProjectileHitPlayer(player,InvaderProjectile, index, 'white')
 
         // Projectile hit player 2
-
-        if (InvaderProjectile.position.y + InvaderProjectile.height >= player2.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player2.position.x && InvaderProjectile.position.x <= player2.position.x + player2.width) {
-
-            InvaderProjectiles.splice(index, 1)
-            if (InvaderProjectile.big) {
-                HP-= 3
-            } else {HP -= 1}
-            playerhit(player2, 'white')
+        
+        if (player2) {
+            ProjectileHitPlayer(player2,InvaderProjectile, index, 'blue')
         }
+        
+        // Projectile hit player 3
+
+        if (player3) {
+            ProjectileHitPlayer(player3,InvaderProjectile, index, 'green')
+        }
+        
+        // Projectile hit player 4
+
+        if (player4) {
+            ProjectileHitPlayer(player4,InvaderProjectile, index, 'yellow')
+        }
+        
     })
 
     projectiles.forEach((projectile, index) => {
@@ -739,6 +729,7 @@ function animate() {
     })
 
     // Player 1 mouvement
+
     if (keys.q.pressed && player.position.x >= 0) {
         player.velocity.x = -5
     } else if (keys.d.pressed && player.position.x + player.width <= canvas.width) {
@@ -748,15 +739,43 @@ function animate() {
     }
 
     // PLayer 2 mouvement
-
-    if (keys.ArrowLeft.pressed && player2.position.x >= 0) {
-        player2.velocity.x = -5
-    } else if (keys.ArrowRight.pressed && player2.position.x + player2.width <= canvas.width) {
-        player2.velocity.x = 5
-    } else {
-        player2.velocity.x = 0
+    
+    if (player2) {
+        if (keys.ArrowLeft.pressed && player2.position.x >= 0) {
+            player2.velocity.x = -5
+        } else if (keys.ArrowRight.pressed && player2.position.x + player2.width <= canvas.width) {
+            player2.velocity.x = 5
+        } else {
+            player2.velocity.x = 0
+        }
     }
 
+    // PLayer 3 mouvement
+    
+    if (player3) {
+        if (keys.r.pressed && player3.position.x >= 0) {
+            player3.velocity.x = -5
+        } else if (keys.t.pressed && player3.position.x + player3.width <= canvas.width) {
+            player3.velocity.x = 5
+        } else {
+            player3.velocity.x = 0
+        }
+    }
+
+    // PLayer 4 mouvement
+    
+    if (player4) {
+        if (keys.u.pressed && player4.position.x >= 0) {
+            player4.velocity.x = -5
+        } else if (keys.i.pressed && player4.position.x + player4.width <= canvas.width) {
+            player4.velocity.x = 5
+        } else {
+            player4.velocity.x = 0
+        }
+    }
+
+
+    
     // spawn ennemies
 
     if (frame % randomInterval === 0 ) {
@@ -802,6 +821,8 @@ addEventListener('keydown', ({key}) => {
             }))
             break;
 
+        // player2
+
         case 'ArrowLeft':
             keys.ArrowLeft.pressed = true
             break;
@@ -809,16 +830,67 @@ addEventListener('keydown', ({key}) => {
             keys.ArrowRight.pressed = true
             break;
         case '0':
-            projectiles.push(new Projectile({
-                position: {
-                    x: player2.position.x + player2.width / 2,
-                    y: player2.position.y
-                },
-                velocity: {
-                    x: 0,
-                    y: -10
-                }
-            }))
+            if (player2) {
+                projectiles.push(new Projectile({
+                    position: {
+                        x: player2.position.x + player2.width / 2,
+                        y: player2.position.y
+                    },
+                    velocity: {
+                        x: 0,
+                        y: -10
+                    }
+                }))
+            }
+            
+            break;
+
+        // player3
+
+        case 'r':
+            keys.r.pressed = true
+            break;
+        case 't':
+            keys.t.pressed = true
+            break;
+        case 'y':
+            if (player3) {
+                projectiles.push(new Projectile({
+                    position: {
+                        x: player3.position.x + player3.width / 2,
+                        y: player3.position.y
+                    },
+                    velocity: {
+                        x: 0,
+                        y: -10
+                    }
+                }))
+            }
+            
+            break;
+
+        // player4
+
+        case 'u':
+            keys.u.pressed = true
+            break;
+        case 'i':
+            keys.i.pressed = true
+            break;
+        case 'o':
+            if (player3) {
+                projectiles.push(new Projectile({
+                    position: {
+                        x: player4.position.x + player4.width / 2,
+                        y: player4.position.y
+                    },
+                    velocity: {
+                        x: 0,
+                        y: -10
+                    }
+                }))
+            }
+            
             break;
     }
 })
@@ -833,14 +905,27 @@ addEventListener('keyup', ({key}) => {
             // console.log('right')
             keys.d.pressed = false
             break;
-        case ' ':
-            // console.log('space')
-            break;
+
+
         case 'ArrowLeft':
             keys.ArrowLeft.pressed = false
             break;
         case 'ArrowRight':
             keys.ArrowRight.pressed = false
+            break;
+
+        case 'r':
+            keys.r.pressed = false
+            break;
+        case 't':
+            keys.t.pressed = false
+            break;
+
+        case 'u':
+            keys.u.pressed = false
+            break;
+        case 'i':
+            keys.i.pressed = false
             break;
     }
 })

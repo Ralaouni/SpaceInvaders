@@ -3,6 +3,7 @@ var scoreEl = document.querySelector('#scoreEl');
 var hs = document.querySelector('#highest_score');
 var hp_heart = document.querySelector('#hp_heart');
 var loseHTML = document.querySelector('#lose');
+var numPlayers = parseFloat(sessionStorage.getItem('number_Of_Players'));
 var c = canvas.getContext('2d');
 hs.innerHTML = "".concat((document.cookie.split('; ')
     .find(function (row) { return row.startsWith('highestscore'); })
@@ -10,7 +11,7 @@ hs.innerHTML = "".concat((document.cookie.split('; ')
 canvas.width = 576;
 canvas.height = 700;
 var Player = /** @class */ (function () {
-    function Player() {
+    function Player(imgsrc, wichPlayer, taille, y) {
         var _this = this;
         this.velocity = {
             x: 0,
@@ -19,15 +20,15 @@ var Player = /** @class */ (function () {
         this.rotation = 0;
         this.opacity = 1;
         var image = new Image();
-        image.src = "img/vaisseau_fanny_pourri.png";
+        image.src = imgsrc;
         image.onload = function () {
-            var scale = 0.04;
+            var scale = taille;
             _this.image = image;
             _this.width = image.width * scale;
             _this.height = image.height * scale;
             _this.position = {
-                x: canvas.width / 2 - _this.width / 2,
-                y: canvas.height - 60
+                x: (canvas.width / 5) * wichPlayer - _this.width / wichPlayer,
+                y: canvas.height - y
             };
         };
     }
@@ -46,44 +47,6 @@ var Player = /** @class */ (function () {
         }
     };
     return Player;
-}());
-var Player2 = /** @class */ (function () {
-    function Player2() {
-        var _this = this;
-        this.velocity = {
-            x: 0,
-            y: 0
-        };
-        this.rotation = 0;
-        this.opacity = 1;
-        var image = new Image();
-        image.src = "img/spaceship.png";
-        image.onload = function () {
-            var scale = 0.11;
-            _this.image = image;
-            _this.width = image.width * scale;
-            _this.height = image.height * scale;
-            _this.position = {
-                x: canvas.width / 4 - _this.width / 2,
-                y: canvas.height - 30
-            };
-        };
-    }
-    Player2.prototype.draw = function () {
-        // c.fillStyle = 'red'
-        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
-        c.save();
-        c.globalAlpha = this.opacity;
-        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
-        c.restore();
-    };
-    Player2.prototype.update = function () {
-        if (this.image) {
-            this.draw();
-            this.position.x += this.velocity.x;
-        }
-    };
-    return Player2;
 }());
 var Projectile = /** @class */ (function () {
     function Projectile(_a) {
@@ -331,8 +294,19 @@ var Grid = /** @class */ (function () {
     };
     return Grid;
 }());
-var player = new Player();
-var player2 = new Player2();
+var player = new Player("img/vaisseau_fanny_pourri.png", 1, 0.04, 60);
+var player2 = null;
+if (numPlayers >= 2) {
+    player2 = new Player("img/spaceship.png", 2, 0.11, 30);
+}
+var player3 = null;
+if (numPlayers >= 3) {
+    player3 = new Player("img/spaceship.png", 3, 0.11, 30);
+}
+var player4 = null;
+if (numPlayers >= 4) {
+    player4 = new Player("img/spaceship.png", 4, 0.11, 30);
+}
 var projectiles = [];
 var projectiles2 = [];
 var grids = [];
@@ -357,6 +331,24 @@ var keys = {
     },
     0: {
         pressed: false
+    },
+    r: {
+        pressed: false
+    },
+    t: {
+        pressed: false
+    },
+    y: {
+        pressed: false
+    },
+    u: {
+        pressed: false
+    },
+    i: {
+        pressed: false
+    },
+    o: {
+        pressed: false
     }
 };
 var frame = 0;
@@ -371,6 +363,18 @@ var HP = 3;
 var soundPlayerDeath = new Audio('sound/player_explosion_sound.wav');
 var soundInvaderDeath = new Audio('sound/invader_explosion_sound.wav');
 var soundHitPlayer = new Audio('sound/hit_player_sound.wav');
+function ProjectileHitPlayer(player, InvaderProjectile, index, color) {
+    if (InvaderProjectile.position.y + InvaderProjectile.height >= player.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player.position.x && InvaderProjectile.position.x <= player.position.x + player.width) {
+        InvaderProjectiles.splice(index, 1);
+        if (InvaderProjectile.big) {
+            HP -= 3;
+        }
+        else {
+            HP -= 1;
+        }
+        playerhit(player, "".concat(color));
+    }
+}
 function loseCondition() {
     setTimeout(function () {
         if (score > parseFloat(document.cookie.split('; ')
@@ -455,7 +459,12 @@ function animate() {
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
     player.update();
-    player2.update();
+    if (player2)
+        player2.update();
+    if (player3)
+        player3.update();
+    if (player4)
+        player4.update();
     bigInvaders.forEach(function (bigInvader, i) {
         bigInvader.update();
         if (frame % 300 === 0) {
@@ -515,26 +524,18 @@ function animate() {
             InvaderProjectile.update();
         }
         // Projectile hit player1
-        if (InvaderProjectile.position.y + InvaderProjectile.height >= player.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player.position.x && InvaderProjectile.position.x <= player.position.x + player.width) {
-            InvaderProjectiles.splice(index, 1);
-            if (InvaderProjectile.big) {
-                HP -= 3;
-            }
-            else {
-                HP -= 1;
-            }
-            playerhit(player, 'blue');
-        }
+        ProjectileHitPlayer(player, InvaderProjectile, index, 'white');
         // Projectile hit player 2
-        if (InvaderProjectile.position.y + InvaderProjectile.height >= player2.position.y && InvaderProjectile.position.x + InvaderProjectile.width >= player2.position.x && InvaderProjectile.position.x <= player2.position.x + player2.width) {
-            InvaderProjectiles.splice(index, 1);
-            if (InvaderProjectile.big) {
-                HP -= 3;
-            }
-            else {
-                HP -= 1;
-            }
-            playerhit(player2, 'white');
+        if (player2) {
+            ProjectileHitPlayer(player2, InvaderProjectile, index, 'blue');
+        }
+        // Projectile hit player 3
+        if (player3) {
+            ProjectileHitPlayer(player3, InvaderProjectile, index, 'green');
+        }
+        // Projectile hit player 4
+        if (player4) {
+            ProjectileHitPlayer(player4, InvaderProjectile, index, 'yellow');
         }
     });
     projectiles.forEach(function (projectile, index) {
@@ -601,14 +602,40 @@ function animate() {
         player.velocity.x = 0;
     }
     // PLayer 2 mouvement
-    if (keys.ArrowLeft.pressed && player2.position.x >= 0) {
-        player2.velocity.x = -5;
+    if (player2) {
+        if (keys.ArrowLeft.pressed && player2.position.x >= 0) {
+            player2.velocity.x = -5;
+        }
+        else if (keys.ArrowRight.pressed && player2.position.x + player2.width <= canvas.width) {
+            player2.velocity.x = 5;
+        }
+        else {
+            player2.velocity.x = 0;
+        }
     }
-    else if (keys.ArrowRight.pressed && player2.position.x + player2.width <= canvas.width) {
-        player2.velocity.x = 5;
+    // PLayer 3 mouvement
+    if (player3) {
+        if (keys.r.pressed && player3.position.x >= 0) {
+            player3.velocity.x = -5;
+        }
+        else if (keys.t.pressed && player3.position.x + player3.width <= canvas.width) {
+            player3.velocity.x = 5;
+        }
+        else {
+            player3.velocity.x = 0;
+        }
     }
-    else {
-        player2.velocity.x = 0;
+    // PLayer 4 mouvement
+    if (player4) {
+        if (keys.u.pressed && player4.position.x >= 0) {
+            player4.velocity.x = -5;
+        }
+        else if (keys.i.pressed && player4.position.x + player4.width <= canvas.width) {
+            player4.velocity.x = 5;
+        }
+        else {
+            player4.velocity.x = 0;
+        }
     }
     // spawn ennemies
     if (frame % randomInterval === 0) {
@@ -652,6 +679,7 @@ addEventListener('keydown', function (_a) {
                 }
             }));
             break;
+        // player2
         case 'ArrowLeft':
             keys.ArrowLeft.pressed = true;
             break;
@@ -659,16 +687,60 @@ addEventListener('keydown', function (_a) {
             keys.ArrowRight.pressed = true;
             break;
         case '0':
-            projectiles.push(new Projectile({
-                position: {
-                    x: player2.position.x + player2.width / 2,
-                    y: player2.position.y
-                },
-                velocity: {
-                    x: 0,
-                    y: -10
-                }
-            }));
+            if (player2) {
+                projectiles.push(new Projectile({
+                    position: {
+                        x: player2.position.x + player2.width / 2,
+                        y: player2.position.y
+                    },
+                    velocity: {
+                        x: 0,
+                        y: -10
+                    }
+                }));
+            }
+            break;
+        // player3
+        case 'r':
+            keys.r.pressed = true;
+            break;
+        case 't':
+            keys.t.pressed = true;
+            break;
+        case 'y':
+            if (player3) {
+                projectiles.push(new Projectile({
+                    position: {
+                        x: player3.position.x + player3.width / 2,
+                        y: player3.position.y
+                    },
+                    velocity: {
+                        x: 0,
+                        y: -10
+                    }
+                }));
+            }
+            break;
+        // player4
+        case 'u':
+            keys.u.pressed = true;
+            break;
+        case 'i':
+            keys.i.pressed = true;
+            break;
+        case 'o':
+            if (player3) {
+                projectiles.push(new Projectile({
+                    position: {
+                        x: player4.position.x + player4.width / 2,
+                        y: player4.position.y
+                    },
+                    velocity: {
+                        x: 0,
+                        y: -10
+                    }
+                }));
+            }
             break;
     }
 });
@@ -683,14 +755,23 @@ addEventListener('keyup', function (_a) {
             // console.log('right')
             keys.d.pressed = false;
             break;
-        case ' ':
-            // console.log('space')
-            break;
         case 'ArrowLeft':
             keys.ArrowLeft.pressed = false;
             break;
         case 'ArrowRight':
             keys.ArrowRight.pressed = false;
+            break;
+        case 'r':
+            keys.r.pressed = false;
+            break;
+        case 't':
+            keys.t.pressed = false;
+            break;
+        case 'u':
+            keys.u.pressed = false;
+            break;
+        case 'i':
+            keys.i.pressed = false;
             break;
     }
 });
