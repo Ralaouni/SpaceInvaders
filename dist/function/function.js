@@ -1,16 +1,17 @@
 function loseCondition() {
     setTimeout(function () {
-        if (score > parseFloat(document.cookie.split('; ')
+        if (document.cookie.split('; ')
+            .find(function (row) { return row.startsWith('highestscore'); }) && score > parseFloat(document.cookie.split('; ')
             .find(function (row) { return row.startsWith('highestscore'); })
             .split('=')[1])) {
             setTimeout(function () {
                 highest_score = score;
                 document.cookie = "highestscore=".concat(highest_score);
-                loseHTML.innerHTML = 'YOU SUCK BUT NOT AS MUCH AS THE OTHER POEPLE !<br> F5 TO RETRY <br> Escape to MENU';
+                loseHTML.innerHTML = 'YOU LOSE BUT NOT AS MUCH AS THE OTHER POEPLE !<br> F5 TO RETRY <br> Escape to MENU';
             }, 2000);
         }
         else {
-            loseHTML.innerHTML = 'YOU SUCK !<br> F5 TO RETRY <br> Escape to MENU';
+            loseHTML.innerHTML = 'YOU LOSE !<br> F5 TO RETRY <br> Escape to MENU';
         }
         game.active = false;
     }, 2000);
