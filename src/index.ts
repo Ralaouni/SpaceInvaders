@@ -16,12 +16,14 @@ const spaceship_Player2 = sessionStorage.getItem('Player2')
 const spaceship_Player3 = sessionStorage.getItem('Player3')
 const spaceship_Player4 = sessionStorage.getItem('Player4')
 
-if ((document.cookie.split('; ')
+if ((!document.cookie.split('; ')
 .find(row => row.startsWith('highestscore')))) {
-    hs.innerHTML = `${(document.cookie.split('; ')
+    document.cookie = `highestscore=${0}`
+}
+hs.innerHTML = `${(document.cookie.split('; ')
     .find(row => row.startsWith('highestscore'))
     .split('=')[1])}`
-}
+
 
 
 canvas.width = 576
@@ -537,7 +539,7 @@ addEventListener('keydown', ({key}) => {
     switch (key){
         case 'Escape': 
         sessionStorage.clear();
-        window.location.href = "./menu.html";
+        window.location.href = "./index.html";
             break;
     }
     if (game.over) return

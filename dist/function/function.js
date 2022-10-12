@@ -1,7 +1,6 @@
 function loseCondition() {
     setTimeout(function () {
-        if (document.cookie.split('; ')
-            .find(function (row) { return row.startsWith('highestscore'); }) && score > parseFloat(document.cookie.split('; ')
+        if (score > parseFloat(document.cookie.split('; ')
             .find(function (row) { return row.startsWith('highestscore'); })
             .split('=')[1])) {
             setTimeout(function () {

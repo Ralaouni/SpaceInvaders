@@ -7,7 +7,7 @@ function spaceship(imgsrc) {
     if (clicks === numplay) {
         window.location.href = 'game.html';
     }
-    setTimeout(function () {
+    else {
         playerSelection.innerHTML = "Player ".concat(clicks + 1);
-    }, 100);
+    }
 }

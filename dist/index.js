@@ -13,12 +13,13 @@ var spaceship_Player1 = sessionStorage.getItem('Player1');
 var spaceship_Player2 = sessionStorage.getItem('Player2');
 var spaceship_Player3 = sessionStorage.getItem('Player3');
 var spaceship_Player4 = sessionStorage.getItem('Player4');
-if ((document.cookie.split('; ')
+if ((!document.cookie.split('; ')
     .find(function (row) { return row.startsWith('highestscore'); }))) {
-    hs.innerHTML = "".concat((document.cookie.split('; ')
-        .find(function (row) { return row.startsWith('highestscore'); })
-        .split('=')[1]));
+    document.cookie = "highestscore=".concat(0);
 }
+hs.innerHTML = "".concat((document.cookie.split('; ')
+    .find(function (row) { return row.startsWith('highestscore'); })
+    .split('=')[1]));
 canvas.width = 576;
 if (numPlayers > 2) {
     canvas.width = 1024;
@@ -466,7 +467,7 @@ addEventListener('keydown', function (_a) {
     switch (key) {
         case 'Escape':
             sessionStorage.clear();
-            window.location.href = "./menu.html";
+            window.location.href = "./index.html";
             break;
     }
     if (game.over)

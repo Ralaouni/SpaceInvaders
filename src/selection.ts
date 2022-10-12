@@ -9,11 +9,9 @@ function spaceship (imgsrc) {
     sessionStorage.setItem(`Player${clicks}`,imgsrc)
     if (clicks === numplay) {
         window.location.href = 'game.html'
+    } else {
+        playerSelection.innerHTML = `Player ${clicks+1}`
     }
     
-   setTimeout(() => {
-    playerSelection.innerHTML = `Player ${clicks+1}`
-   }, 100);
-
 }
 
