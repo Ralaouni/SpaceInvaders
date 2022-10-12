@@ -1,7 +1,7 @@
 function numberOfPlayers(number) {
     sessionStorage.setItem('number_Of_Players', "".concat(number));
     console.log(sessionStorage);
-    window.location.href = 'index.html';
+    window.location.href = 'selection.html';
 }
 // function ArrowNavigation () {
 //     const ul = document.querySelector('ul')

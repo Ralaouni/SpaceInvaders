@@ -15,7 +15,7 @@ class Player {
 
         this.rotation = 0
         this.opacity = 1
-        
+
         const image = new Image()
         image.src = imgsrc
         image.onload = () => {
@@ -23,27 +23,27 @@ class Player {
             this.image = image
             this.width = image.width * scale
             this.height = image.height * scale
-            this.position = {
-                x: (canvas.width / 5 ) * wichPlayer - this.width / wichPlayer,
-                y: canvas.height - y
+            if (!this.position) {
+                this.position = {
+                    x: (canvas.width / 5 ) * wichPlayer - this.width / 2,
+                    y: canvas.height - y
+                }
             }
         }
     }
-
     draw() {
         // c.fillStyle = 'red'
         // c.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-            c.save()
-            c.globalAlpha = this.opacity
-            c.drawImage(
+        c.save()
+        c.globalAlpha = this.opacity
+        c.drawImage(
                 this.image,
                 this.position.x,
                 this.position.y,
                 this.width,
                 this.height
                 )   
-            c.restore()
+        c.restore()
     }
 
     update() {

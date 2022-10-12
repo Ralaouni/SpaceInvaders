@@ -3,17 +3,22 @@ class Projectile {
     position: any
     velocity: any
     radius: number
-    constructor({position, velocity}) {
+    color: string
+    player_number: number
+    constructor({position, velocity, color, player_number}) {
         this.position = position
         this.velocity = velocity
+        this.color = color
 
         this.radius = 3
+        this.player_number = player_number
+
     }
 
     draw() {
         c.beginPath()
         c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false)
-        c.fillStyle = 'red'
+        c.fillStyle = this.color
         c.fill()
         c.closePath()
     }
@@ -29,21 +34,32 @@ class Projectile2 {
     position: any
     velocity: any
     radius: number
-    constructor({position, velocity, radius}) {
+    opacity: number
+    fades: boolean
+    player_number: number
+    constructor({position, velocity, radius, fades, player_number}) {
         this.position = position
         this.velocity = velocity
 
         this.radius = radius
+        this.opacity = 1
+        this.fades = fades
+
+        this.player_number = player_number
+
     }
 
     draw() {
+        c.save()
+        c.globalAlpha = this.opacity
         c.beginPath()
         c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false)
         c.fillStyle = 'yellow'
         c.fill()
         c.closePath()
+        c.restore()
     }
-
+    
     update() {
         this.draw()
         this.position.x += this.velocity.x
@@ -68,7 +84,7 @@ class InvaderProjectile {
     }
 
     draw() {
-        c.fillStyle = 'white'
+        c.fillStyle = 'lime'
         c.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
 

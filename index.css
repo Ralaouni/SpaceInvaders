@@ -1,6 +1,10 @@
 body{
     display: flex;
     flex-direction: column;
+    margin: 0;
+    background: url('https://cdn.pixabay.com/photo/2016/07/02/12/21/eclipse-1492818_960_720.jpg') fixed no-repeat;
+    background-position: center center;
+    background-size: cover;
 }
 #score_p {
     font-family: sans-serif;
@@ -16,12 +20,31 @@ body{
 #hp{
     margin-left: 180px;
 }
+#Munitions{
+    margin-left: 50px;
+}
+.munition{
+    margin-right: 15px;
+}
+#munition1{
+    color: aqua;
+}
+#munition2{
+    color: red;
+}
+#munition3{
+    color: lime;
+}
+#munition4{
+    color: orange;
+}
 #board{
     position: relative;
     width: 574px;
     display: flex;
+    align-content: space-around;
     margin: none;
-    background-color: white;
+    background-color: rgba(205, 204, 204, 0.652);
 }
 .fa-heart{
     color: red;
@@ -36,7 +59,7 @@ body{
     display: block;
     align-items: center;
     top: 100px;
-    left: 87px;
+    left: 17%;
     width: 400;
     text-align: center;
     overflow-wrap: break-word;

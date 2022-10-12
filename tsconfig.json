@@ -9,6 +9,7 @@
     "files": [
         "src/index.ts",
         "src/menu.ts",
+        "src/selection.ts",
         "src/function/function.ts",
         "src/class/player.ts",
         "src/class/projectile.ts",

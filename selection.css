@@ -1,0 +1,31 @@
+
+body{
+    background: url('https://cdn.pixabay.com/photo/2016/07/02/12/21/eclipse-1492818_960_720.jpg') fixed no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+h1, h2{
+    text-align: center;
+    position: relative;
+    top: 20%;
+    color: white;
+}
+#selection{
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    justify-content: center;
+    position: relative;
+    top: 25%;
+}
+
+button{
+    width: 150px;
+    height: 150px;
+    margin: 50px;
+    background-color: rgba(163, 161, 161, 0.44);
+}
+button:hover{
+    cursor: pointer;
+    background-color: rgba(141, 141, 141, 0.798);
+}

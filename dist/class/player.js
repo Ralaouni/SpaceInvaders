@@ -14,10 +14,12 @@ var Player = /** @class */ (function () {
             _this.image = image;
             _this.width = image.width * scale;
             _this.height = image.height * scale;
-            _this.position = {
-                x: (canvas.width / 5) * wichPlayer - _this.width / wichPlayer,
-                y: canvas.height - y
-            };
+            if (!_this.position) {
+                _this.position = {
+                    x: (canvas.width / 5) * wichPlayer - _this.width / 2,
+                    y: canvas.height - y
+                };
+            }
         };
     }
     Player.prototype.draw = function () {
