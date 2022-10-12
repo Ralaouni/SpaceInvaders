@@ -1,0 +1,70 @@
+body{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    background: url('https://cdn.pixabay.com/photo/2016/07/02/12/21/eclipse-1492818_960_720.jpg') fixed no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+#score_p {
+    font-family: sans-serif;
+    font-size: 16px;
+}
+#hs{
+    position: absolute;
+    right: 10px;
+    color: red;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+#hp{
+    margin-left: 180px;
+}
+#Munitions{
+    margin-left: 50px;
+}
+.munition{
+    margin-right: 15px;
+}
+#munition1{
+    color: aqua;
+}
+#munition2{
+    color: red;
+}
+#munition3{
+    color: lime;
+}
+#munition4{
+    color: orange;
+}
+#board{
+    position: relative;
+    width: 574px;
+    display: flex;
+    align-content: space-around;
+    margin: none;
+    background-color: rgba(205, 204, 204, 0.652);
+}
+.fa-heart{
+    color: red;
+}
+#canvas{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+#lose{
+    position: absolute;
+    display: block;
+    align-items: center;
+    top: 100px;
+    left: 17%;
+    width: 400;
+    text-align: center;
+    overflow-wrap: break-word;
+    align-items: center;
+    color: white;
+    font-size: 50;
+    z-index: 10;
+}

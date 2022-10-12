@@ -8,7 +8,7 @@ function spaceship (imgsrc) {
     clicks ++
     sessionStorage.setItem(`Player${clicks}`,imgsrc)
     if (clicks === numplay) {
-        window.location.href = 'index.html'
+        window.location.href = 'game.html'
     }
     
    setTimeout(() => {

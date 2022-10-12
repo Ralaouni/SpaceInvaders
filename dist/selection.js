@@ -5,7 +5,7 @@ function spaceship(imgsrc) {
     clicks++;
     sessionStorage.setItem("Player".concat(clicks), imgsrc);
     if (clicks === numplay) {
-        window.location.href = 'index.html';
+        window.location.href = 'game.html';
     }
     setTimeout(function () {
         playerSelection.innerHTML = "Player ".concat(clicks + 1);

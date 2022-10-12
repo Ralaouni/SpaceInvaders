@@ -4,41 +4,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="index.css" />
-    <script src="https://kit.fontawesome.com/d484ac1f71.js" crossorigin="anonymous"></script>
-    <title>Space Invaders Game</title>
+    <title>Space Invaders Menu</title>
 </head>
-<style>
-    body {
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: grey;
-    }
-</style>
-
 <body>
-    <div id="canvas">
-        <canvas></canvas>
-        <p id="lose"></p>
-        
-    </div>
-    <div id="board">
-        <p id="score_p"><span>Score:</span> <span id="scoreEl">0</span></p>
-        <p id="Munitions"><span>special:</span><br>
-            <span id="munition1" class="munition">0</span>
-            <span id="munition2" class="munition"></span>
-            <span id="munition3" class="munition"></span>
-            <span id="munition4" class="munition"></span>
-        </p>
-        <p id="hp"><span id="hp_heart"></span></p>
-        <p id="hs"><span>highest score :</span><span id="highest_score"></span></p>
-    </div>
+    <h1>Space Invaders</h1>
+    <h2>How many Players ?</h2>
+    <ul>
+        <li id="player1"><button onclick="numberOfPlayers(1)"> 1 Player </button></li>
+        <li id="player2"><button onclick="numberOfPlayers(2)">2 Players </button></li>
+        <li id="player3"><button onclick="numberOfPlayers(3)">3 Players </button></li>
+        <li id="player4"><button onclick="numberOfPlayers(4)">4 Players </button></li>
+    </ul>
 </body>
-<script src="dist/class/particle.js"></script>
-<script src="dist/function/function.js"></script>
-<script src="dist/class/player.js"></script>
-<script src="dist/class/enemy.js"></script>
-<script src="dist/class/projectile.js"></script>
-<script src="dist/index.js"></script>
+<script src="dist/menu.js"></script>
 </html>
