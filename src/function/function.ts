@@ -6,7 +6,7 @@ function loseCondition () {
             setTimeout(() => {
                 highest_score = score
                 document.cookie = `highestscore=${highest_score}`
-                loseHTML.innerHTML = 'YOU LOSE BUT NOT AS MUCH AS THE OTHER POEPLE !<br> F5 TO RETRY <br> Escape to MENU'
+                loseHTML.innerHTML = 'YOU LOSE BUT NOT AS MUCH AS THE LAST TIME !<br> F5 TO RETRY <br> Escape to MENU'
             }, 2000);
         } else {
             loseHTML.innerHTML = 'YOU LOSE !<br> F5 TO RETRY <br> Escape to MENU'

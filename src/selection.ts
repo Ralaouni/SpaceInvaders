@@ -8,7 +8,7 @@ function spaceship (imgsrc) {
     clicks ++
     sessionStorage.setItem(`Player${clicks}`,imgsrc)
     if (clicks === numplay) {
-        window.location.href = 'game.html'
+        window.location.href = 'keyboard.html'
     } else {
         playerSelection.innerHTML = `Player ${clicks+1}`
     }
