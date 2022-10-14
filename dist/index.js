@@ -169,9 +169,6 @@ function animate() {
     if (score >= 1500) {
         winCondition();
     }
-    if (bigBoss.length > 0) {
-        console.log(bigBoss[0].HP);
-    }
     munition1.innerHTML = "".concat(Math.floor(score_player[0] / 25) - shoot_b_p1);
     if (player2) {
         munition2.innerHTML = "".concat(Math.floor(score_player[1] / 25) - shoot_b_p2);
@@ -429,7 +426,6 @@ function animate() {
         }
     }
     // spawn ennemies
-    console.log((Math.floor(score / 50) + 1));
     if (frame % randomInterval === 0 && time > 1 && bigMonsters.length < 1 && score < 1000) {
         if (randomInterval < 910 - ((3 / 4) * random_IntervalP3)) {
             grids.push(new Grid());
@@ -463,11 +459,10 @@ function animate() {
 animate();
 addEventListener('keydown', function (_a) {
     var key = _a.key;
-    console.log(key);
     switch (key) {
         case 'Escape':
             sessionStorage.clear();
-            window.location.href = "./index.html";
+            window.location.href = 'index.html';
             break;
     }
     if (game.over)
