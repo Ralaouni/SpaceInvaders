@@ -23,6 +23,7 @@ button{
     width: 150px;
     height: 150px;
     margin: 50px;
+    border-color: #d0721b;
     background-color: rgba(163, 161, 161, 0.44);
 }
 button:hover{
